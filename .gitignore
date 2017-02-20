@@ -1,6 +1,9 @@
-﻿*.suo
-
-*.csuser
-*/obj
-*/Debug
-*/Release
+﻿/build/
+*.suo
+*.user
+_ReSharper.*/
+*.sdf
+bin/
+obj/
+Debug/
+Release/
