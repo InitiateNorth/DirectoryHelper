@@ -203,7 +203,17 @@
         /// <returns><c>True</c> if the object is a contact, otherwise <c>false</c>.</returns>
         public static bool IsContactObject(this DirectoryEntry entry)
         {
-            return entry.Properties.GetCollectionReference<string>(DirectoryAttributes.ObjectClass).Contains("contact");
+            return entry.Properties.GetCollectionReference<string>(DirectoryAttributes.ObjectClass).ContainsCaseInsensitive("contact");
+        }
+
+        /// <summary>
+        /// Determines whether the <see cref="DirectoryEntry"/> is a user object or not.
+        /// </summary>
+        /// <param name="entry">The <see cref="DirectoryEntry"/> to check.</param>
+        /// <returns><c>True</c> if the object is a user, otherwise <c>false</c>.</returns>
+        public static bool IsUserObject(this DirectoryEntry entry)
+        {
+            return entry.Properties.GetCollectionReference<string>(DirectoryAttributes.ObjectClass).ContainsCaseInsensitive("user");
         }
 
         /// <summary>
@@ -301,6 +311,18 @@
         public static bool EqualsCaseInsensitive(this string source, string target, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
         {
             return source.Equals(target, comparison);
+        }
+
+        /// <summary>
+        /// Checks a collection for case insensitive matches.
+        /// </summary>
+        /// <param name="source">The collection to check.</param>
+        /// <param name="target">The string to match.</param>
+        /// <param name="comparison">Optional comparison (default is case insensitive)</param>
+        /// <returns><c>True</c> if the collection contains any instances of the string to match, otherwise <c>false</c>.</returns>
+        public static bool ContainsCaseInsensitive(this IEnumerable<string> source, string target, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
+        {
+            return source != null && target != null && source.Any(s => s.IndexOf(target, comparison) >= 0);
         }
 
         public static string TrimStart(this string value, string toTrim, StringComparison comparison = StringComparison.OrdinalIgnoreCase)

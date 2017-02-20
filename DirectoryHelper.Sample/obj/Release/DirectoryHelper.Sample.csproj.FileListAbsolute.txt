@@ -1,0 +1,2 @@
+C:\src\DirectoryHelper\DirectoryHelper.Sample\bin\Release\DirectoryHelper.Sample.exe.config
+C:\src\DirectoryHelper\DirectoryHelper.Sample\obj\Release\DirectoryHelper.Sample.csprojResolveAssemblyReference.cache

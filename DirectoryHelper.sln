@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectoryHelper", "Director
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectoryHelper.Tests", "DirectoryHelper.Tests\DirectoryHelper.Tests.csproj", "{8D5C8A94-8A69-43C8-9F64-E9B4E94DCA55}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectoryHelper.Sample", "DirectoryHelper.Sample\DirectoryHelper.Sample.csproj", "{B362347A-96BF-4EB4-96C5-354334882369}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{8D5C8A94-8A69-43C8-9F64-E9B4E94DCA55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D5C8A94-8A69-43C8-9F64-E9B4E94DCA55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D5C8A94-8A69-43C8-9F64-E9B4E94DCA55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B362347A-96BF-4EB4-96C5-354334882369}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B362347A-96BF-4EB4-96C5-354334882369}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B362347A-96BF-4EB4-96C5-354334882369}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B362347A-96BF-4EB4-96C5-354334882369}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
