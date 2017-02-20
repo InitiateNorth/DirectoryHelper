@@ -1,8 +1,6 @@
-﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
-################################################################################
+﻿*.suo
 
-/DirectoryHelper.Tests/obj/Debug
-/DirectoryHelper/obj/Debug
-/DirectoryHelper/obj/Release
-/DirectoryHelper.Tests/obj/Release
+*.csuser
+*/obj
+*/Debug
+*/Release
