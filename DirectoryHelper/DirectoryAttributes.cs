@@ -12,6 +12,8 @@
 
         public static string Mail => "mail";
 
+        public static string MailNickname => "mailNickname";
+
         public static string SamAccountName => "sAMAccountName";
 
         public static string ObjectSid => "objectSid";
@@ -32,7 +34,9 @@
 
         public static string Member => "member";
 
-        public static string MailNickname => "mailNickname";
+        public static string MembersAdded => $"{Member};range=1-1";
+
+        public static string MembersRemoved => $"{Member};range=0-0";
 
         public static string ProxyAddresses => "proxyAddresses";
 

@@ -3,3 +3,6 @@
 ################################################################################
 
 /DirectoryHelper.Tests/obj/Debug
+/DirectoryHelper/obj/Debug
+/DirectoryHelper/obj/Release
+/DirectoryHelper.Tests/obj/Release

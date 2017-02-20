@@ -7,12 +7,23 @@
     using System.DirectoryServices;
     using System.Security.Principal;
 
+    /// <summary>
+    /// Extension methods to help in dealing with the <see cref="System.DirectoryServices.DirectoryEntry"/> class.
+    /// </summary>
     public static class DirectoryExtensions
     {
-        //private const string RegexFqdn = @"(?=^.{1,254}$)(^(?:(?!\d+\.)[a-zA-Z0-9_\-]{1,63}\.?)+(?:[a-zA-Z]{2,})$)";
-
         #region DirectoryEntry extensions
 
+        /// <summary>
+        /// Gets a collection of reference typed properties for the specified attribute name.
+        /// </summary>
+        /// <typeparam name="T">The type we expect to be contained in the collection.</typeparam>
+        /// <param name="properties">The properties to extract our values from.</param>
+        /// <param name="attributeName">The name of the attribute to get the property values for.</param>
+        /// <returns>
+        /// A collection of properties, or null/empty if they cannot be found.
+        /// </returns>
+        /// <remarks>The collection may still contain null values, as we are using the friendly 'as' casting method.</remarks>
         public static IEnumerable<T> GetCollectionReference<T>(this PropertyCollection properties, string attributeName) where T : class
         {
             if (properties.Contains(attributeName) && properties[attributeName].Count > 0)
@@ -28,6 +39,8 @@
             }
             else if (typeof(T) == typeof(string))
             {
+                // TODO: Is this really needed if the requestor is aware we return null and is using the null-conditional operator '?.'
+                // We couldn't find what the requestor asked for, but they wanted a collection of strings.
                 return (IEnumerable<T>)new List<string>();
             }
             else
@@ -37,6 +50,16 @@
 
         }
 
+        /// <summary>
+        /// Gets a collection of reference typed properties for the specified attribute name.
+        /// </summary>
+        /// <typeparam name="T">The type we expect to be contained in the collection.</typeparam>
+        /// <param name="properties">The properties to extract the values from.</param>
+        /// <param name="attributeName">The name of the attribute to get the property values for.</param>
+        /// <returns>
+        /// A collection of properties, or null/empty if they cannot be found.
+        /// </returns>
+        /// <remarks>The collection may still contain null values, as we are using the friendly 'as' casting method.</remarks>
         public static IEnumerable<T> GetCollectionReference<T>(this ResultPropertyCollection properties, string attributeName) where T : class
         {
             if (properties.Contains(attributeName) && properties[attributeName].Count > 0)
@@ -52,6 +75,8 @@
             }
             else if (typeof(T) == typeof(string))
             {
+                // TODO: Is this really needed if the requestor is aware we return null and is using the null-conditional operator '?.'
+                // We couldn't find what the requestor asked for, but they wanted a collection of strings.
                 return (IEnumerable<T>)new List<string>();
             }
             else
@@ -61,6 +86,14 @@
 
         }
 
+        /// <summary>
+        /// Gets the value for the specified attribute name.
+        /// </summary>
+        /// <typeparam name="T">The return type the value should be cast to.</typeparam>
+        /// <param name="properties">The properties to extract the value from.</param>
+        /// <param name="attributeName">The name of the attribute to get the property value for.</param>
+        /// <param name="index">The array index of the property we want to return (all properties are multi-valued).</param>
+        /// <returns>The typed value of the property at the specified index if it can be found, otherwise null/empty.</returns>
         public static T GetReference<T>(this PropertyCollection properties, string attributeName, int index = 0) where T : class
         {
             if (properties.Contains(attributeName) && properties[attributeName].Count >= index)
@@ -78,10 +111,18 @@
                 return null;
             }
         }
-
-        // TODO: Is there a way to abstract the duplicate ResultPropertyCollection/PropertyCollection so we don't have to copy/paste methods? IDictionary?
+                
+        /// <summary>
+        /// Gets the value for the specified attribute name.
+        /// </summary>
+        /// <typeparam name="T">The return type the value should be cast to.</typeparam>
+        /// <param name="properties">The properties to extract the value from.</param>
+        /// <param name="attributeName">The name of the attribute to get the property value for.</param>
+        /// <param name="index">The array index of the property we want to return (all properties are multi-valued).</param>
+        /// <returns>The typed value of the property at the specified index if it can be found otherwise null/empty.</returns>
         public static T GetReference<T>(this ResultPropertyCollection properties, string attributeName, int index = 0) where T : class
         {
+            // TODO: Is there a way to abstract the duplicate ResultPropertyCollection/PropertyCollection so we don't have to copy/paste methods? IDictionary?
             if (properties.Contains(attributeName) && properties[attributeName].Count >= index)
             {
                 return properties[attributeName][index] as T;
@@ -98,6 +139,14 @@
             }
         }
 
+        /// <summary>
+        /// Get a value typed property for the specified attribute name.
+        /// </summary>
+        /// <typeparam name="T">The return value type that should be returned.</typeparam>
+        /// <param name="properties">The properties to extract the value from.</param>
+        /// <param name="attributeName">The name of the attribute to get the property value for.</param>
+        /// <param name="index">The array index of the proeprty we want to return (all properties are multi-valued).</param>
+        /// <returns>The typed value of the property at the specified index if it can be found and cast, otherwise null/default.</returns>
         public static T? GetValue<T>(this PropertyCollection properties, string attributeName, int index = 0) where T : struct
         {
             var result = new T?();
@@ -118,9 +167,17 @@
             return result;
         }
 
-        // TODO: Is there a way to abstract the duplicate ResultPropertyCollection/PropertyCollection so we don't have to copy/paste methods? IDictionary?
+        /// <summary>
+        /// Get a value typed property for the specified attribute name.
+        /// </summary>
+        /// <typeparam name="T">The return value type that should be returned.</typeparam>
+        /// <param name="properties">The properties to extract the value from.</param>
+        /// <param name="attributeName">The name of the attribute to get the property value for.</param>
+        /// <param name="index">The array index of the proeprty we want to return (all properties are multi-valued).</param>
+        /// <returns>The typed value of the property at the specified index if it can be found and cast, otherwise null/default.</returns>
         public static T? GetValue<T>(this ResultPropertyCollection properties, string attributeName, int index = 0) where T : struct
         {
+            // TODO: Is there a way to abstract the duplicate ResultPropertyCollection/PropertyCollection so we don't have to copy/paste methods? IDictionary?
             var result = new T?();
 
             if (properties.Contains(attributeName) && properties[attributeName].Count >= index)
@@ -139,11 +196,22 @@
             return result;
         }
 
+        /// <summary>
+        /// Determines whether the <see cref="DirectoryEntry"/> is a contact object or not.
+        /// </summary>
+        /// <param name="entry">The <see cref="DirectoryEntry"/> to check.</param>
+        /// <returns><c>True</c> if the object is a contact, otherwise <c>false</c>.</returns>
         public static bool IsContactObject(this DirectoryEntry entry)
         {
             return entry.Properties.GetCollectionReference<string>(DirectoryAttributes.ObjectClass).Contains("contact");
         }
 
+        /// <summary>
+        /// Determines whether the <see cref="DirectoryEntry"/> is older than the specified time span.
+        /// </summary>
+        /// <param name="entry">The <see cref="DirectoryEntry"/> to check.</param>
+        /// <param name="time">The time span we want to know if the object is older than.</param>
+        /// <returns><c>True</c> if the object is older than the time span, otherwise <c>false</c>.</returns>
         public static bool IsOlderThan(this DirectoryEntry entry, TimeSpan time)
         {
             var dateIgnoredFrom = DateTime.Now.Subtract(time);
@@ -154,6 +222,11 @@
 
         #endregion
 
+        /// <summary>
+        /// Converts a byte array to a human readable SID.
+        /// </summary>
+        /// <param name="value">The SID byte array to convert.</param>
+        /// <returns>The human readable SID if it can be converted, otherwise null.</returns>
         public static string ToSidString(this byte[] value)
         {
             string sidString;
@@ -170,6 +243,11 @@
             return sidString;
         }
 
+        /// <summary>
+        /// Resolves a byte array representing a SID to a human readable domain\user.
+        /// </summary>
+        /// <param name="value">The SID byte array to resolve.</param>
+        /// <returns>The resolved domain and user in the form DOMAIN\user, or null if it cannot be resolved.</returns>
         public static string ToResolvedDomainAndUser(this byte[] value)
         {
             try
@@ -184,11 +262,21 @@
             }
         }
 
+        /// <summary>
+        /// Determines whether a SID byte array can be resolved.
+        /// </summary>
+        /// <param name="value">The byte array to attempt to resolve.</param>
+        /// <returns><c>True</c> if the value can be resolved, otherwise <c>false</c>.</returns>
         public static bool IsSidResolvable(this byte[] value)
         {
             return !string.IsNullOrEmpty(value.ToResolvedDomainAndUser());
         }
 
+        /// <summary>
+        /// Converts a string value to a secure string.
+        /// </summary>
+        /// <param name="value">The input string to secure.</param>
+        /// <returns>The secure version of the string.</returns>
         public static SecureString ToSecureString(this string value)
         {
             var secure = new SecureString();
@@ -203,6 +291,13 @@
             return secure;
         }
 
+        /// <summary>
+        /// Compares two strings for equality ignoring case.
+        /// </summary>
+        /// <param name="source">The first string.</param>
+        /// <param name="target">The second string.</param>
+        /// <param name="comparison">Optional comparison allows for overriding of type of case ignored.</param>
+        /// <returns><c>True</c> if the strings are equal, otherwise <c>false</c>.</returns>
         public static bool EqualsCaseInsensitive(this string source, string target, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
         {
             return source.Equals(target, comparison);
