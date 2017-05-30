@@ -6,6 +6,7 @@
     using System.Security;
     using System.DirectoryServices;
     using System.Security.Principal;
+    using System.Collections;
 
     /// <summary>
     /// Extension methods to help in dealing with the <see cref="System.DirectoryServices.DirectoryEntry"/> class.
@@ -37,15 +38,9 @@
 
                 return items;
             }
-            else if (typeof(T) == typeof(string))
-            {
-                // TODO: Is this really needed if the requestor is aware we return null and is using the null-conditional operator '?.'
-                // We couldn't find what the requestor asked for, but they wanted a collection of strings.
-                return (IEnumerable<T>)new List<string>();
-            }
             else
             {
-                return null;
+                return Enumerable.Empty<T>();
             }
 
         }
@@ -73,15 +68,9 @@
 
                 return items;
             }
-            else if (typeof(T) == typeof(string))
-            {
-                // TODO: Is this really needed if the requestor is aware we return null and is using the null-conditional operator '?.'
-                // We couldn't find what the requestor asked for, but they wanted a collection of strings.
-                return (IEnumerable<T>)new List<string>();
-            }
             else
             {
-                return null;
+                return Enumerable.Empty<T>();
             }
 
         }
@@ -111,7 +100,7 @@
                 return null;
             }
         }
-                
+
         /// <summary>
         /// Gets the value for the specified attribute name.
         /// </summary>
@@ -122,7 +111,6 @@
         /// <returns>The typed value of the property at the specified index if it can be found otherwise null/empty.</returns>
         public static T GetReference<T>(this ResultPropertyCollection properties, string attributeName, int index = 0) where T : class
         {
-            // TODO: Is there a way to abstract the duplicate ResultPropertyCollection/PropertyCollection so we don't have to copy/paste methods? IDictionary?
             if (properties.Contains(attributeName) && properties[attributeName].Count >= index)
             {
                 return properties[attributeName][index] as T;
@@ -159,8 +147,7 @@
                 }
                 catch
                 {
-                    // TODO: Does this seem like the right approach returning a default T to the requestor without them knowing?
-                    // NOTE: Ignore the error in casting, we will return the default of T.
+                    // NOTE: Ignore the error in casting, we will return the default of T?.
                 }
             }
 
@@ -177,7 +164,6 @@
         /// <returns>The typed value of the property at the specified index if it can be found and cast, otherwise null/default.</returns>
         public static T? GetValue<T>(this ResultPropertyCollection properties, string attributeName, int index = 0) where T : struct
         {
-            // TODO: Is there a way to abstract the duplicate ResultPropertyCollection/PropertyCollection so we don't have to copy/paste methods? IDictionary?
             var result = new T?();
 
             if (properties.Contains(attributeName) && properties[attributeName].Count >= index)
@@ -188,7 +174,6 @@
                 }
                 catch
                 {
-                    // TODO: Does this seem like the right approach returning a default T to the requestor without them knowing?
                     // NOTE: Ignore the error in casting, we will return the default of T.
                 }
             }
@@ -325,11 +310,19 @@
             return source != null && target != null && source.Any(s => s.IndexOf(target, comparison) >= 0);
         }
 
+        /// <summary>Trims a sub-string from the start of the string.</summary>
+        /// <param name="value">The source to trim from.</param>
+        /// <param name="toTrim">To value trim.</param>
+        /// <param name="comparison">The string comparison.</param>
+        /// <returns>A string which has the specified string removed from the start.</returns>
         public static string TrimStart(this string value, string toTrim, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
         {
             return value.StartsWith(toTrim, comparison) ? value.Remove(0, toTrim.Length) : value;
         }
 
+        /// <summary>Escapes the value for use in an LDAP filter.</summary>
+        /// <param name="value">The value to escape.</param>
+        /// <returns>An escaped version of the value.</returns>
         public static string EscapeValueForLdapFilter(this string value)
         {
             /*  NOTE: If we want to provide the ability to pass in an entire DN and correctly escape the right parts, we need some decent regexes.
@@ -349,35 +342,58 @@
                     .Replace(@"/", @"\2f");
         }
 
+        /// <summary>Converts a hex string to a byte array.</summary>
+        /// <param name="hex">The hexadecimal string representation.</param>
+        /// <returns>The byte array representation of the hex.</returns>
         public static byte[] ToByteArray(this string hex)
         {
-            // TODO: Some checks to ensure that this is valid hex.
-            return Enumerable
+            if (int.TryParse(hex, System.Globalization.NumberStyles.HexNumber, null, out int parsed))
+            {
+                return Enumerable
                         .Range(0, hex.Length)
                         .Where(x => x % 2 == 0)
                         .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
                         .ToArray();
-        }               
+            }
+            else
+            {
+                return null;
+            }
+        }
 
         #region Object FQDN extensions
-        
+
+        /// <summary>Converts a FQDN to an LDAP 'configuration' context connection string.</summary>
+        /// <param name="domainFqdn">The domain FQDN.</param>
+        /// <returns>An LDAP formatted connection string to the configuration context.</returns>
         public static string ToLdapConfigurationConnectionString(this Fqdn domainFqdn)
         {
             return $"LDAP://{domainFqdn}/CN=Configuration,{domainFqdn.ToDistinguishedName()}";
         }
 
+        /// <summary>Converts a FQDN to an LDAP connection string.</summary>
+        /// <param name="domainFqdn">The domain FQDN.</param>
+        /// <returns>An LDAP formatted connection string.</returns>
         public static string ToLdapConnectionString(this Fqdn domainFqdn)
         {
             return $"LDAP://{domainFqdn}/{domainFqdn.ToDistinguishedName()}";
         }
 
+        /// <summary>Converts a FQDN and distinguished name to a LDAP connection string.</summary>
+        /// <param name="domainFqdn">The domain FQDN.</param>
+        /// <param name="dn">The distinguished name.</param>
+        /// <returns>An LDAP formatted connection string to the distinguished name.</returns>
         public static string ToLdapDNConnectionString(this Fqdn domainFqdn, string dn)
         {
             // Note: it seems to be very difficult to use a regex to validate a DN.
-            // TODO: validate the DN
+            // TODO: validate the DN format
             return $"LDAP://{domainFqdn}/{dn}";
         }
 
+        /// <summary>Convert a FQDN and SID to a LDAP connection string.</summary>
+        /// <param name="domainFqdn">The domain FQDN.</param>
+        /// <param name="sid">The SID to connect to.</param>
+        /// <returns>An LDAP formatted connection string to the SID.</returns>
         public static string ToLdapSidConnectionString(this Fqdn domainFqdn, Sid sid)
         {
             return $"LDAP://{domainFqdn}/<SID={sid}>";
@@ -387,6 +403,10 @@
 
         #region String FQDN extensions
 
+        /// <summary>Converts a FQDN to a LDAP configuration connection string.</summary>
+        /// <param name="domainFqdn">The domain FQDN.</param>
+        /// <returns>An LDAP formatted connected string to the configuration context.</returns>
+        /// <exception cref="System.ArgumentException">If <paramref name="domainFqdn"/> is not a valid FQDN.</exception>
         public static string ToLdapConfigurationConnectionString(this string domainFqdn)
         {
             var fqdnResult = Fqdn.Create(domainFqdn);
@@ -399,6 +419,10 @@
             return fqdnResult.Value.ToLdapConfigurationConnectionString();
         }
 
+        /// <summary>Convert an FQDN to a LDAP connection string.</summary>
+        /// <param name="domainFqdn">The domain FQDN.</param>
+        /// <returns>An LDAP connection string.</returns>
+        /// <exception cref="System.ArgumentException">If <paramref name="domainFqdn"/> is not a valid FQDN.</exception>
         public static string ToLdapConnectionString(this string domainFqdn)
         {
             var fqdnResult = Fqdn.Create(domainFqdn);
@@ -411,6 +435,11 @@
             return fqdnResult.Value.ToLdapConnectionString();
         }
 
+        /// <summary>Converts an FQDN and distinguished name to an LDAP connection string.</summary>
+        /// <param name="domainFqdn">The domain FQDN.</param>
+        /// <param name="dn">The distinguished name.</param>
+        /// <returns>An LDAP connection string.</returns>
+        /// <exception cref="System.ArgumentException">If the <paramref name="domainFqdn"/>is not a valid FQDN.</exception>
         public static string ToLdapDNConnectionString(this string domainFqdn, string dn)
         {
             var fqdnResult = Fqdn.Create(domainFqdn);
@@ -423,6 +452,14 @@
             return fqdnResult.Value.ToLdapDNConnectionString(dn);
         }
 
+        /// <summary>Converts a FQDN and SID to a LDAP connection string.</summary>
+        /// <param name="domainFqdn">The domain FQDN.</param>
+        /// <param name="sid">The SID.</param>
+        /// <returns>An LDAP connection string.</returns>
+        /// <exception cref="System.ArgumentException">
+        /// If <paramref name="domainFqdn"/>is not a valid FQDN, or 
+        /// if <paramref name="sid"/> is not a valid SID.
+        /// </exception>
         public static string ToLdapSidConnectionString(this string domainFqdn, string sid)
         {
             var fqdnResult = Fqdn.Create(domainFqdn);
@@ -443,6 +480,9 @@
 
         #endregion
 
+        /// <summary>Converts a domain FQDN to a distinguished.</summary>
+        /// <param name="domainFqdn">The domain FQDN.</param>
+        /// <returns>The distinguished name representation of the <see cref="Fqdn"/>.</returns>
         private static string ToDistinguishedName(this Fqdn domainFqdn)
         {
             return $"DC={domainFqdn.ToString().Replace(".", ",DC=")}";

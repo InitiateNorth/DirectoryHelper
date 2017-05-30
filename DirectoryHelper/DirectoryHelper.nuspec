@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>InitiateNorth.DirectoryHelper</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>peteski22</authors>
+    <owners>peteski22</owners>
+    <licenseUrl>https://github.com/peteski22/DirectoryHelper/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/peteski22/DirectoryHelper.git</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>Initial release.</releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <tags>ActiveDirectory helper extensions DirectoryEntry DirectorySearcher DirectoryServices</tags>
+  </metadata>
+</package>

@@ -44,7 +44,8 @@
 
                 using (var results = searcher.FindAll())
                 {
-                    /* Sadly the directory stuff doesn't implement any LINQ related goodness, 
+                    /* 
+                     * Sadly the directory stuff doesn't implement any LINQ related goodness, 
                      * and we have to tell the compiler what we're expecting (a SearchResult from a SearchResultCollection)
                      */
                     foreach (SearchResult result in results)
@@ -54,6 +55,12 @@
                         var memberOf = result.Properties.GetCollectionReference<string>(DirectoryAttributes.MemberOf).ToList(); // Force evaluation now so you can have a poke about.
                         var objectSid = result.Properties.GetReference<byte[]>(DirectoryAttributes.ObjectSid);
                         // ... etc. etc.
+
+                        /* 
+                         * NOTE: Be aware that if you are retrieving a group and want to check the 'members'
+                         * property for example, AD will limit the results to 1500 per 'page' unless you are
+                         * doing an 'attribute scope query'.
+                         */
 
                         // Some examples of other extensions being used to get a SID
                         if (objectSid.IsSidResolvable())
