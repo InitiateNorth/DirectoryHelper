@@ -1,4 +1,4 @@
-﻿namespace DirectoryHelper
+﻿namespace InitiateNorth.DirectoryHelper
 {
     /// <summary>
     /// Contains the names of attributes valid in Active Directory.

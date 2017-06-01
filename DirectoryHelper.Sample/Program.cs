@@ -1,4 +1,4 @@
-﻿namespace DirectoryHelper.Sample
+﻿namespace InitiateNorth.DirectoryHelper.Sample
 {
     using System.DirectoryServices;
     using System.Linq;

@@ -7,7 +7,7 @@
     <ProjectGuid>{50521981-70CC-486D-9749-5FA0951A7898}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DirectoryHelper</RootNamespace>
+    <RootNamespace>InitiateNorth.DirectoryHelper</RootNamespace>
     <AssemblyName>DirectoryHelper</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

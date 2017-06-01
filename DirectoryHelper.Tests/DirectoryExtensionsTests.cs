@@ -1,4 +1,4 @@
-﻿namespace DirectoryHelper.Tests
+﻿namespace InitiateNorth.DirectoryHelper.Tests
 {
     using System;
     using Microsoft.VisualStudio.TestTools.UnitTesting;

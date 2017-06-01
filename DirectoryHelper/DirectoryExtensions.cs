@@ -1,4 +1,4 @@
-﻿namespace DirectoryHelper
+﻿namespace InitiateNorth.DirectoryHelper
 {
     using System;
     using System.Collections.Generic;
