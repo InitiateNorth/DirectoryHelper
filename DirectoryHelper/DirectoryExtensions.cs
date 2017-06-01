@@ -6,7 +6,6 @@
     using System.Security;
     using System.DirectoryServices;
     using System.Security.Principal;
-    using System.Collections;
 
     /// <summary>
     /// Extension methods to help in dealing with the <see cref="System.DirectoryServices.DirectoryEntry"/> class.
