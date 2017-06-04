@@ -5,10 +5,10 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DirectoryHelper.Sample")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("InitiateNorth.DirectoryHelper.Sample")]
+[assembly: AssemblyDescription("Sample program showing library usage")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Initiate North")]
 [assembly: AssemblyProduct("DirectoryHelper.Sample")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
