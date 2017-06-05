@@ -336,7 +336,7 @@
         /// <summary>Converts a hex string to a byte array.</summary>
         /// <param name="hex">The hexadecimal string representation.</param>
         /// <returns>The byte array representation of the hex.</returns>
-        public static byte[] ToByteArray(this string hex)
+        public static byte[] ToByteArrayFromHex(this string hex)
         {
             if (int.TryParse(hex, System.Globalization.NumberStyles.HexNumber, null, out int parsed))
             {
@@ -348,6 +348,17 @@
             }
 
             return null;
+        }
+
+        /// <summary>Converts a SID string representation to a byte array.</summary>
+        /// <param name="sidString">The SID string.</param>
+        /// <returns>The byte array representation of the SID string.</returns>
+        public static byte[] ToByteArrayFromSidString(this string sidString)
+        {
+            var sid = new SecurityIdentifier(sidString);
+            var bytes = new byte[sid.BinaryLength];
+            sid.GetBinaryForm(bytes, 0);
+            return bytes;
         }
 
         #region Object FQDN extensions
