@@ -1,42 +1,44 @@
 ﻿namespace InitiateNorth.DirectoryHelper
 {
+    using System;
+    using System.Security.Principal;
     using CSharpFunctionalExtensions;
-    using System.Text.RegularExpressions;
 
     /// <summary>
-    /// Represents a security identifier (SID).
+    /// Represents a security identifier (SID) for an account.
     /// </summary>
-    public class Sid
+    public class AccountSid
     {
-        /// <summary>The regex which represents a SID.</summary>
-        private const string RegexSid = @"^S-1-[0-59]-\d{2}-\d{10}-\d{10}-\d{8}-[1-9]\d{3}";
-
         /// <summary>The value.</summary>
         private readonly string _value;
 
-        /// <summary>Initializes a new instance of the <see cref="Sid"/> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref="AccountSid"/> class.</summary>
         /// <param name="value">The value.</param>
-        private Sid(string value)
+        private AccountSid(string value)
         {
             _value = value;
         }
 
-        /// <summary>Creates the specified SID as the <see cref="Sid"/> object.</summary>
+        /// <summary>Creates the specified SID as the <see cref="AccountSid"/> object.</summary>
         /// <param name="sid">The SID value.</param>
         /// <returns>A <see cref="Result"/> which represents whether the SID was created or not.</returns>
-        public static Result<Sid> Create(string sid)
+        public static Result<AccountSid> Create(string sid)
         {
             if (string.IsNullOrWhiteSpace(sid))
             {
-                return Result.Fail<Sid>("Empty or null SID");
+                return Result.Fail<AccountSid>("Empty or null SID");
             }
-            else if (!Regex.IsMatch(sid, RegexSid))
+
+            try
             {
-                return Result.Fail<Sid>("Invalid SID");
+                var s = new SecurityIdentifier(sid);
+                return s.IsAccountSid() ? 
+                    Result.Ok(new AccountSid(sid)) :
+                    Result.Fail<AccountSid>("Not an Account SID, perhaps a Well-known SID");
             }
-            else
+            catch (Exception ex)
             {
-                return Result.Ok(new Sid(sid));
+                return Result.Fail<AccountSid>($"Invalid SID. {ex.Message}");
             }
         }
 
@@ -50,13 +52,13 @@
         }
 
         /// <summary>
-        /// Performs an implicit conversion from <see cref="Sid"/> to <see cref="System.String"/>.
+        /// Performs an implicit conversion from <see cref="AccountSid"/> to <see cref="System.String"/>.
         /// </summary>
-        /// <param name="sid">The sid.</param>
+        /// <param name="accountSid">The accountSid.</param>
         /// <returns>The result of the conversion.</returns>
-        public static implicit operator string(Sid sid)
+        public static implicit operator string(AccountSid accountSid)
         {
-            return sid._value;
+            return accountSid._value;
         }
 
         /// <summary>
@@ -68,14 +70,14 @@
         /// </returns>
         public override bool Equals(object obj)
         {
-            Sid sid = obj as Sid;
+            AccountSid accountSid = obj as AccountSid;
 
-            if (ReferenceEquals(sid, null))
+            if (ReferenceEquals(accountSid, null))
             {
                 return false;
             }
 
-            return _value == sid._value;
+            return _value == accountSid._value;
         }
 
         /// <summary>Returns a hash code for this instance.</summary>

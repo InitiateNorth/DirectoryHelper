@@ -52,7 +52,7 @@
     <Compile Include="Fqdn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DirectoryExtensions.cs" />
-    <Compile Include="Sid.cs" />
+    <Compile Include="AccountSid.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

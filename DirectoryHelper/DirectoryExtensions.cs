@@ -32,16 +32,13 @@
 
                 foreach (var attribute in properties[attributeName])
                 {
-                    items.Add(attributeName as T);
+                    items.Add(attribute as T);
                 }
 
                 return items;
             }
-            else
-            {
-                return Enumerable.Empty<T>();
-            }
 
+            return Enumerable.Empty<T>();
         }
 
         /// <summary>
@@ -62,16 +59,13 @@
 
                 foreach (var attribute in properties[attributeName])
                 {
-                    items.Add(attributeName as T);
+                    items.Add(attribute as T);
                 }
 
                 return items;
             }
-            else
-            {
-                return Enumerable.Empty<T>();
-            }
 
+            return Enumerable.Empty<T>();
         }
 
         /// <summary>
@@ -88,16 +82,15 @@
             {
                 return properties[attributeName][index] as T;
             }
-            else if (typeof(T) == typeof(string))
+
+            if (typeof(T) == typeof(string))
             {
                 // TODO: Is this really needed if the requestor is aware we return null and is using the null-conditional operator '?.'
                 // We couldn't find what the requestor asked for, but they wanted a string.
                 return (T)(object)string.Empty;
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         /// <summary>
@@ -114,16 +107,15 @@
             {
                 return properties[attributeName][index] as T;
             }
-            else if (typeof(T) == typeof(string))
+
+            if (typeof(T) == typeof(string))
             {
                 // TODO: Is this really needed if the requestor is aware we return null and is using the null-conditional operator '?.'
                 // We couldn't find what the requestor asked for, but they wanted a string.
                 return (T)(object)string.Empty;
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         /// <summary>
@@ -354,10 +346,8 @@
                         .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
                         .ToArray();
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         #region Object FQDN extensions
@@ -391,11 +381,11 @@
 
         /// <summary>Convert a FQDN and SID to a LDAP connection string.</summary>
         /// <param name="domainFqdn">The domain FQDN.</param>
-        /// <param name="sid">The SID to connect to.</param>
+        /// <param name="accountSid">The SID to connect to.</param>
         /// <returns>An LDAP formatted connection string to the SID.</returns>
-        public static string ToLdapSidConnectionString(this Fqdn domainFqdn, Sid sid)
+        public static string ToLdapSidConnectionString(this Fqdn domainFqdn, AccountSid accountSid)
         {
-            return $"LDAP://{domainFqdn}/<SID={sid}>";
+            return $"LDAP://{domainFqdn}/<SID={accountSid}>";
         }
 
         #endregion
@@ -412,7 +402,7 @@
 
             if (fqdnResult.IsFailure)
             {
-                throw new ArgumentException(fqdnResult.Error, "domainFqdn");
+                throw new ArgumentException(fqdnResult.Error, nameof(domainFqdn));
             }
             
             return fqdnResult.Value.ToLdapConfigurationConnectionString();
@@ -428,7 +418,7 @@
 
             if (fqdnResult.IsFailure)
             {
-                throw new ArgumentException(fqdnResult.Error, "domainFqdn");
+                throw new ArgumentException(fqdnResult.Error, nameof(domainFqdn));
             }
 
             return fqdnResult.Value.ToLdapConnectionString();
@@ -445,7 +435,7 @@
 
             if (fqdnResult.IsFailure)
             {
-                throw new ArgumentException(fqdnResult.Error, "domainFqdn");
+                throw new ArgumentException(fqdnResult.Error, nameof(domainFqdn));
             }
 
             return fqdnResult.Value.ToLdapDNConnectionString(dn);
@@ -462,16 +452,16 @@
         public static string ToLdapSidConnectionString(this string domainFqdn, string sid)
         {
             var fqdnResult = Fqdn.Create(domainFqdn);
-            var sidResult = Sid.Create(sid);
+            var sidResult = AccountSid.Create(sid);
 
             if (fqdnResult.IsFailure)
             {
-                throw new ArgumentException(fqdnResult.Error, "domainFqdn");
+                throw new ArgumentException(fqdnResult.Error, nameof(domainFqdn));
             }
 
             if (sidResult.IsFailure)
             {
-                throw new ArgumentException(sidResult.Error, "sid");
+                throw new ArgumentException(sidResult.Error, nameof(sid));
             }
 
             return fqdnResult.Value.ToLdapSidConnectionString(sidResult.Value);

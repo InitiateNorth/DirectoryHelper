@@ -248,7 +248,7 @@
         
         /* TODO: tests for:
          *  public static string ToLdapDNConnectionString(this Fqdn domainFqdn, string dn)
-         *  public static string ToLdapSidConnectionString(this Fqdn domainFqdn, Sid sid)
+         *  public static string ToLdapSidConnectionString(this Fqdn domainFqdn, AccountSid sid)
          *  and their string counterparts
          */
     }
