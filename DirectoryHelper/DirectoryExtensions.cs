@@ -134,7 +134,15 @@
             {
                 try
                 {
-                    result = (T)properties[attributeName][index];
+                    if (typeof(T) == typeof(Guid))
+                    {
+                        var guid = properties.GetReference<string>(attributeName, index);
+                        result = (T)(object) new Guid(guid);
+                    }
+                    else
+                    {
+                        result = (T)properties[attributeName][index];
+                    }
                 }
                 catch
                 {
@@ -161,7 +169,15 @@
             {
                 try
                 {
-                    result = (T)properties[attributeName][index];
+                    if (typeof(T) == typeof(Guid))
+                    {
+                        var guid = properties.GetReference<string>(attributeName, index);
+                        result = (T)(object)new Guid(guid);
+                    }
+                    else
+                    {
+                        result = (T)properties[attributeName][index];
+                    }
                 }
                 catch
                 {
