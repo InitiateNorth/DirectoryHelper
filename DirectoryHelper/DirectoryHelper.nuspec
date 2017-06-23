@@ -11,9 +11,9 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>
-      * Repackages due to missing updates in the spec file (AKA no accurate release note information on nuget)
-      * Added TrimEnd (to match TrimStart)
-      * Added overload to ToLdap... methods to permit using a specific DC (FQDN or and IP) when creating the LDAP string.
+* Repackages due to missing updates in the spec file (AKA no accurate release note information on nuget)
+* Added TrimEnd (to match TrimStart)
+* Added overload to ToLdap... methods to permit using a specific DC (FQDN or and IP) when creating the LDAP string.
     </releaseNotes>
     <copyright>Copyright 2017</copyright>
     <tags>ActiveDirectory helper extensions DirectoryEntry DirectorySearcher DirectoryServices</tags>

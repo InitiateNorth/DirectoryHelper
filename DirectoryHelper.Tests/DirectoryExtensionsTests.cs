@@ -117,16 +117,45 @@
         #region LDAP Configuration context testing
 
         [TestMethod]
+        public void IsCorrectLdapConfigWhenRightMixtureOfFqdnAndDomainController()
+        {
+            var fqdn = "google.com";
+            var dc = "domaincontroller.google.com";
+            var fqdnResult = Fqdn.Create(fqdn);
+
+            Assert.IsTrue(fqdnResult.IsSuccess);
+
+            var result = fqdnResult.Value.ToLdapConfigurationConnectionString(dc);
+
+            Assert.AreEqual("LDAP://domaincontroller.google.com/CN=Configuration,DC=google,DC=com", result);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void IsCorrectLdapConfigExceptionWhenBadMixtureOfFqdnAndDomainController()
+        {
+            var fqdn = "google.com";
+            var dc = "domaincontroller.yahoo.com";
+            var fqdnResult = Fqdn.Create(fqdn);
+
+            Assert.IsTrue(fqdnResult.IsSuccess);
+
+            var result = fqdnResult.Value.ToLdapConfigurationConnectionString(dc);
+
+            Assert.AreEqual("LDAP://domaincontroller.google.com/CN=Configuration,DC=google,DC=com", result);
+        }
+
+        [TestMethod]
         public void IsCorrectLdapConfigConnectionStringWithValidDomainFqdn()
         {
-            var fqdn = "controller.google.com";
+            var fqdn = "google.com";
             var fqdnResult = Fqdn.Create(fqdn);
 
             Assert.IsTrue(fqdnResult.IsSuccess);
 
             var result = fqdnResult.Value.ToLdapConfigurationConnectionString();
 
-            Assert.AreEqual("LDAP://controller.google.com/CN=Configuration,DC=controller,DC=google,DC=com", result);
+            Assert.AreEqual("LDAP://google.com/CN=Configuration,DC=google,DC=com", result);
         }
 
         [TestMethod]
@@ -140,10 +169,10 @@
         [TestMethod]
         public void IsCorrectLdapConfigConnectionStringWithValidDomainFqdnString()
         {
-            var fqdn = "controller.google.com";
+            var fqdn = "google.com";
             var result = fqdn.ToLdapConfigurationConnectionString();
 
-            Assert.AreEqual("LDAP://controller.google.com/CN=Configuration,DC=controller,DC=google,DC=com", result);
+            Assert.AreEqual("LDAP://google.com/CN=Configuration,DC=google,DC=com", result);
         }
 
         [TestMethod]
@@ -183,16 +212,45 @@
         #region LDAP Default context testing
 
         [TestMethod]
+        public void IsCorrectLdapDefaultWhenRightMixtureOfFqdnAndDomainController()
+        {
+            var fqdn = "google.com";
+            var dc = "domaincontroller.google.com";
+            var fqdnResult = Fqdn.Create(fqdn);
+
+            Assert.IsTrue(fqdnResult.IsSuccess);
+
+            var result = fqdnResult.Value.ToLdapConnectionString(dc);
+
+            Assert.AreEqual("LDAP://domaincontroller.google.com/DC=google,DC=com", result);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void IsCorrectLdapDefaultExceptionWhenBadMixtureOfFqdnAndDomainController()
+        {
+            var fqdn = "google.com";
+            var dc = "domaincontroller.yahoo.com";
+            var fqdnResult = Fqdn.Create(fqdn);
+
+            Assert.IsTrue(fqdnResult.IsSuccess);
+
+            var result = fqdnResult.Value.ToLdapConnectionString(dc);
+
+            Assert.AreEqual("LDAP://domaincontroller.google.com/DC=google,DC=com", result);
+        }
+
+        [TestMethod]
         public void IsCorrectLdapDefaultConnectionStringWithValidDomainFqdn()
         {
-            var fqdn = "controller.google.com";
+            var fqdn = "google.com";
             var fqdnResult = Fqdn.Create(fqdn);
 
             Assert.IsTrue(fqdnResult.IsSuccess);
 
             var result = fqdnResult.Value.ToLdapConnectionString();
 
-            Assert.AreEqual("LDAP://controller.google.com/DC=controller,DC=google,DC=com", result);
+            Assert.AreEqual("LDAP://google.com/DC=google,DC=com", result);
         }
 
         [TestMethod]
@@ -206,10 +264,10 @@
         [TestMethod]
         public void IsCorrectLdapDefaultConnectionStringWithValidDomainFqdnString()
         {
-            var fqdn = "controller.google.com";
+            var fqdn = "google.com";
             var result = fqdn.ToLdapConnectionString();
 
-            Assert.AreEqual("LDAP://controller.google.com/DC=controller,DC=google,DC=com", result);
+            Assert.AreEqual("LDAP://google.com/DC=google,DC=com", result);
         }
 
         [TestMethod]

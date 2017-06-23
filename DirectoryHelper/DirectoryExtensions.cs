@@ -390,7 +390,7 @@
         /// <returns>An LDAP formatted connection string to the configuration context.</returns>
         public static string ToLdapConfigurationConnectionString(this Fqdn domainFqdn, string domainControllerFqdn)
         {
-            if (!IPAddress.TryParse(domainControllerFqdn, out IPAddress ip) && !domainControllerFqdn.Contains(domainFqdn))
+            if (!IPAddress.TryParse(domainControllerFqdn, out IPAddress ip) && !domainControllerFqdn.Contains(domainFqdn.ToString()))
                 throw new ArgumentException($"The {nameof(domainControllerFqdn)} must be in the same domain as the {nameof(domainFqdn)}", nameof(domainControllerFqdn));
 
             return $"LDAP://{domainControllerFqdn}/CN=Configuration,{domainFqdn.ToDistinguishedName()}";
@@ -410,7 +410,7 @@
         /// <returns>An LDAP formatted connection string.</returns>
         public static string ToLdapConnectionString(this Fqdn domainFqdn, string domainControllerFqdn)
         {
-            if (!IPAddress.TryParse(domainControllerFqdn, out IPAddress ip) && !domainControllerFqdn.Contains(domainFqdn))
+            if (!IPAddress.TryParse(domainControllerFqdn, out IPAddress ip) && !domainControllerFqdn.Contains(domainFqdn.ToString()))
                 throw new ArgumentException($"The {nameof(domainControllerFqdn)} must be in the same domain as the {nameof(domainFqdn)}", nameof(domainControllerFqdn));
 
             return $"LDAP://{domainControllerFqdn}/{domainFqdn.ToDistinguishedName()}";
