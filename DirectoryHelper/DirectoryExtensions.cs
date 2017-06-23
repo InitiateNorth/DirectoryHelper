@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Security;
     using System.DirectoryServices;
+    using System.Net;
     using System.Security.Principal;
 
     /// <summary>
@@ -28,14 +29,7 @@
         {
             if (properties.Contains(attributeName) && properties[attributeName].Count > 0)
             {
-                var items = new List<T>();
-
-                foreach (var attribute in properties[attributeName])
-                {
-                    items.Add(attribute as T);
-                }
-
-                return items;
+                return (from object attribute in properties[attributeName] select attribute as T).ToList();
             }
 
             return Enumerable.Empty<T>();
@@ -55,14 +49,7 @@
         {
             if (properties.Contains(attributeName) && properties[attributeName].Count > 0)
             {
-                var items = new List<T>();
-
-                foreach (var attribute in properties[attributeName])
-                {
-                    items.Add(attribute as T);
-                }
-
-                return items;
+                return (from object attribute in properties[attributeName] select attribute as T).ToList();
             }
 
             return Enumerable.Empty<T>();
@@ -327,6 +314,16 @@
             return value.StartsWith(toTrim, comparison) ? value.Remove(0, toTrim.Length) : value;
         }
 
+        /// <summary>Trims a sub-string from the end of the string.</summary>
+        /// <param name="value">The source to trim from.</param>
+        /// <param name="toTrim">To value trim.</param>
+        /// <param name="comparison">The string comparison.</param>
+        /// <returns>A string which has the specified string removed from the end.</returns>
+        public static string TrimEnd(this string value, string toTrim, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
+        {
+            return value.EndsWith(toTrim, comparison) ? value.Remove(value.Length - toTrim.Length, toTrim.Length) : value;
+        }
+
         /// <summary>Escapes the value for use in an LDAP filter.</summary>
         /// <param name="value">The value to escape.</param>
         /// <returns>An escaped version of the value.</returns>
@@ -387,12 +384,36 @@
             return $"LDAP://{domainFqdn}/CN=Configuration,{domainFqdn.ToDistinguishedName()}";
         }
 
+        /// <summary>Converts a FQDN to an LDAP 'configuration' context connection string.</summary>
+        /// <param name="domainFqdn">The domain FQDN.</param>
+        /// <param name="domainControllerFqdn">The domain controller FQDN to use in this domain. (NOTE: this can be an IP address).</param>
+        /// <returns>An LDAP formatted connection string to the configuration context.</returns>
+        public static string ToLdapConfigurationConnectionString(this Fqdn domainFqdn, string domainControllerFqdn)
+        {
+            if (!IPAddress.TryParse(domainControllerFqdn, out IPAddress ip) && !domainControllerFqdn.Contains(domainFqdn))
+                throw new ArgumentException($"The {nameof(domainControllerFqdn)} must be in the same domain as the {nameof(domainFqdn)}", nameof(domainControllerFqdn));
+
+            return $"LDAP://{domainControllerFqdn}/CN=Configuration,{domainFqdn.ToDistinguishedName()}";
+        }
+
         /// <summary>Converts a FQDN to an LDAP connection string.</summary>
         /// <param name="domainFqdn">The domain FQDN.</param>
         /// <returns>An LDAP formatted connection string.</returns>
         public static string ToLdapConnectionString(this Fqdn domainFqdn)
         {
             return $"LDAP://{domainFqdn}/{domainFqdn.ToDistinguishedName()}";
+        }
+
+        /// <summary>Converts a FQDN to an LDAP connection string.</summary>
+        /// <param name="domainFqdn">The domain FQDN.</param>
+        /// <param name="domainControllerFqdn">The domain controller FQDN to use in this domain. (NOTE: this can be an IP address).</param>
+        /// <returns>An LDAP formatted connection string.</returns>
+        public static string ToLdapConnectionString(this Fqdn domainFqdn, string domainControllerFqdn)
+        {
+            if (!IPAddress.TryParse(domainControllerFqdn, out IPAddress ip) && !domainControllerFqdn.Contains(domainFqdn))
+                throw new ArgumentException($"The {nameof(domainControllerFqdn)} must be in the same domain as the {nameof(domainFqdn)}", nameof(domainControllerFqdn));
+
+            return $"LDAP://{domainControllerFqdn}/{domainFqdn.ToDistinguishedName()}";
         }
 
         /// <summary>Converts a FQDN and distinguished name to a LDAP connection string.</summary>
