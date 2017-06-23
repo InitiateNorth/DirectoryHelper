@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Security;
     using System.DirectoryServices;
+    using System.Globalization;
     using System.Net;
     using System.Security.Principal;
 
@@ -304,6 +305,18 @@
             return source != null && target != null && source.Any(s => s.IndexOf(target, comparison) >= 0);
         }
 
+        /// <summary>
+        /// Checks a string for a case insensitive matche.
+        /// </summary>
+        /// <param name="source">The string to check.</param>
+        /// <param name="target">The string to match.</param>
+        /// <param name="comparison">Optional comparison (default is case insensitive)</param>
+        /// <returns><c>True</c> if the string contains any instances of the string to match, otherwise <c>false</c>.</returns>
+        public static bool ContainsCaseInsensitive(this string source, string target, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
+        {
+            return source != null && target != null && CultureInfo.CurrentCulture.CompareInfo.IndexOf(source, target, CompareOptions.IgnoreCase) >= 0;
+        }
+
         /// <summary>Trims a sub-string from the start of the string.</summary>
         /// <param name="value">The source to trim from.</param>
         /// <param name="toTrim">To value trim.</param>
@@ -390,7 +403,7 @@
         /// <returns>An LDAP formatted connection string to the configuration context.</returns>
         public static string ToLdapConfigurationConnectionString(this Fqdn domainFqdn, string domainControllerFqdn)
         {
-            if (!IPAddress.TryParse(domainControllerFqdn, out IPAddress ip) && !domainControllerFqdn.Contains(domainFqdn.ToString()))
+            if (!IPAddress.TryParse(domainControllerFqdn, out IPAddress ip) && !domainControllerFqdn.ContainsCaseInsensitive(domainFqdn.ToString()))
                 throw new ArgumentException($"The {nameof(domainControllerFqdn)} must be in the same domain as the {nameof(domainFqdn)}", nameof(domainControllerFqdn));
 
             return $"LDAP://{domainControllerFqdn}/CN=Configuration,{domainFqdn.ToDistinguishedName()}";
@@ -410,7 +423,7 @@
         /// <returns>An LDAP formatted connection string.</returns>
         public static string ToLdapConnectionString(this Fqdn domainFqdn, string domainControllerFqdn)
         {
-            if (!IPAddress.TryParse(domainControllerFqdn, out IPAddress ip) && !domainControllerFqdn.Contains(domainFqdn.ToString()))
+            if (!IPAddress.TryParse(domainControllerFqdn, out IPAddress ip) && !domainControllerFqdn.ContainsCaseInsensitive(domainFqdn.ToString()))
                 throw new ArgumentException($"The {nameof(domainControllerFqdn)} must be in the same domain as the {nameof(domainFqdn)}", nameof(domainControllerFqdn));
 
             return $"LDAP://{domainControllerFqdn}/{domainFqdn.ToDistinguishedName()}";

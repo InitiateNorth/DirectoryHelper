@@ -226,6 +226,20 @@
         }
 
         [TestMethod]
+        public void IsCorrectLdapDefaultWhenRightMixtureOfFqdnAndDomainControllerCaseSensitive()
+        {
+            var fqdn = "GOOGLE.COM";
+            var dc = "domaincontroller.google.com";
+            var fqdnResult = Fqdn.Create(fqdn);
+
+            Assert.IsTrue(fqdnResult.IsSuccess);
+
+            var result = fqdnResult.Value.ToLdapConnectionString(dc);
+
+            Assert.AreEqual("LDAP://domaincontroller.google.com/DC=GOOGLE,DC=COM", result);
+        }
+
+        [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void IsCorrectLdapDefaultExceptionWhenBadMixtureOfFqdnAndDomainController()
         {
@@ -238,6 +252,21 @@
             var result = fqdnResult.Value.ToLdapConnectionString(dc);
 
             Assert.AreEqual("LDAP://domaincontroller.google.com/DC=google,DC=com", result);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void IsCorrectLdapDefaultExceptionWhenBadMixtureOfFqdnAndDomainControllerCaseInsensitive()
+        {
+            var fqdn = "google.com";
+            var dc = "domaincontroller.yahoo.com";
+            var fqdnResult = Fqdn.Create(fqdn);
+
+            Assert.IsTrue(fqdnResult.IsSuccess);
+
+            var result = fqdnResult.Value.ToLdapConnectionString(dc);
+
+            Assert.AreEqual("LDAP://DOMAINCONTROLLER.GOOGLE.COM/DC=google,DC=com", result);
         }
 
         [TestMethod]
