@@ -70,7 +70,7 @@
         /// </returns>
         public override bool Equals(object obj)
         {
-            AccountSid accountSid = obj as AccountSid;
+            var accountSid = obj as AccountSid;
 
             if (ReferenceEquals(accountSid, null))
             {

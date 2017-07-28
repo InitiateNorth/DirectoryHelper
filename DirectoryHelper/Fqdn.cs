@@ -30,14 +30,8 @@
             {
                 return Result.Fail<Fqdn>("Empty or null FQDN");
             }
-            else if (!Regex.IsMatch(fqdn, RegexFqdn))
-            {
-                return Result.Fail<Fqdn>("Invalid FQDN");
-            }
-            else
-            {
-                return Result.Ok(new Fqdn(fqdn));
-            }
+
+            return !Regex.IsMatch(fqdn, RegexFqdn) ? Result.Fail<Fqdn>("Invalid FQDN") : Result.Ok(new Fqdn(fqdn));
         }
 
         /// <summary>
@@ -68,14 +62,9 @@
         /// </returns>
         public override bool Equals(object obj)
         {
-            Fqdn fqdn = obj as Fqdn;
+            var fqdn = obj as Fqdn;
 
-            if (ReferenceEquals(fqdn, null))
-            {
-                return false;
-            }
-
-            return _value == fqdn._value;
+            return !ReferenceEquals(fqdn, null) && _value.EqualsCaseInsensitive(fqdn._value);
         }
 
         /// <summary>Returns a hash code for this instance.</summary>

@@ -42,6 +42,16 @@
             Assert.IsFalse(result);
         }
 
+        [TestMethod]
+        public void FqdnIsEqualWhenCaseIsDifferent()
+        {
+            var fqdn = "foo.google.com";
+            var a = Fqdn.Create(fqdn.ToUpperInvariant()).Value;
+            var b = Fqdn.Create(fqdn.ToLowerInvariant()).Value;
+
+            Assert.IsTrue(a.Equals(b));
+        }
+
         #endregion
 
         #region Trimming
